@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Result — DocForge</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap');
+
+  :root {
+    --ink: #0B0E13;
+    --panel: #12161D;
+    --panel-line: #232935;
+    --paper: #E8E6DF;
+    --paper-dim: #9BA0AC;
+    --amber: #E8A33D;
+    --red: #E4572E;
+    --green: #4CAF7D;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Inter', sans-serif;
+    padding: 32px 20px 80px;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; }
+
+  a.back {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--paper-dim);
+    text-decoration: none;
+  }
+  a.back:hover { color: var(--amber); }
+
+  .verdict-row {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin: 28px 0 8px;
+    flex-wrap: wrap;
+  }
+
+  .stamp {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: 0.04em;
+    padding: 10px 20px;
+    border: 3px solid;
+    transform: rotate(-3deg);
+    text-transform: uppercase;
+  }
+  .stamp.forged { color: var(--red); border-color: var(--red); }
+  .stamp.suspicious { color: var(--amber); border-color: var(--amber); }
+  .stamp.authentic { color: var(--green); border-color: var(--green); }
+
+  .score-big {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 42px;
+    font-weight: 700;
+  }
+  .score-label { font-size: 12px; color: var(--paper-dim); font-family: 'JetBrains Mono', monospace; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 32px 0;
+  }
+  @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+
+  .panel {
+    border: 1px solid var(--panel-line);
+    background: var(--panel);
+    padding: 16px;
+  }
+  .panel h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: var(--amber);
+    margin: 0 0 12px;
+    text-transform: uppercase;
+  }
+  .panel img {
+    width: 100%;
+    display: block;
+    border: 1px solid var(--panel-line);
+  }
+  .panel .cap { font-size: 12px; color: var(--paper-dim); margin-top: 8px; line-height: 1.4; }
+
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 24px 0;
+  }
+  .metric {
+    border: 1px solid var(--panel-line);
+    padding: 14px 16px;
+  }
+  .metric .val { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; }
+  .metric .lbl { font-size: 11.5px; color: var(--paper-dim); margin-top: 4px; }
+
+  .flags {
+    border: 1px solid var(--panel-line);
+    background: var(--panel);
+    padding: 16px 20px;
+    margin: 24px 0;
+  }
+  .flags h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--paper-dim);
+    margin: 0 0 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .flags ul { margin: 0; padding-left: 18px; }
+  .flags li { font-size: 13.5px; margin-bottom: 6px; color: var(--paper); }
+  .flags .none { color: var(--paper-dim); font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="/">← New submission</a>
+
+  <div class="verdict-row">
+    <div class="stamp {{ 'forged' if 'FORGED' in verdict else ('suspicious' if 'SUSPICIOUS' in verdict else 'authentic') }}">{{ verdict }}</div>
+    <div>
+      <div class="score-big">{{ final_score }}<span style="font-size:18px;color:var(--paper-dim)">/100</span></div>
+      <div class="score-label">COMPOSITE SUSPICION SCORE</div>
+    </div>
+  </div>
+
+  <div class="metrics">
+    <div class="metric"><div class="val">{{ ela_score }}</div><div class="lbl">ELA SCORE (compression)</div></div>
+    <div class="metric"><div class="val">{{ metadata_score }}</div><div class="lbl">METADATA SCORE</div></div>
+    <div class="metric"><div class="val">{{ copy_move_score }}</div><div class="lbl">COPY-MOVE SCORE ({{ cm_pairs }} pairs)</div></div>
+  </div>
+
+  <div class="flags">
+    <h3>Metadata flags</h3>
+    {% if flags %}
+      <ul>{% for f in flags %}<li>{{ f }}</li>{% endfor %}</ul>
+    {% else %}
+      <div class="none">No metadata anomalies detected.</div>
+    {% endif %}
+  </div>
+
+  <div class="grid">
+    <div class="panel">
+      <h3>Original</h3>
+      <img src="{{ url_for('static', filename=original) }}" alt="original document">
+      <div class="cap">As submitted.</div>
+    </div>
+    <div class="panel">
+      <h3>Error Level Analysis</h3>
+      <img src="{{ url_for('static', filename=ela_img) }}" alt="ELA heatmap">
+      <div class="cap">Bright regions = abnormal compression error, often indicating localized edits.</div>
+    </div>
+    <div class="panel" style="grid-column: 1 / -1;">
+      <h3>Copy-Move Matches</h3>
+      <img src="{{ url_for('static', filename=cm_img) }}" alt="copy-move matches">
+      <div class="cap">Yellow lines connect visually near-duplicate regions — a common signature of copy-pasted signatures, stamps, or photos.</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

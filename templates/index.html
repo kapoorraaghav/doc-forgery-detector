@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DocForge — Document Forgery Detector</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap');
+
+  :root {
+    --ink: #0B0E13;
+    --panel: #12161D;
+    --panel-line: #232935;
+    --paper: #E8E6DF;
+    --paper-dim: #9BA0AC;
+    --amber: #E8A33D;
+    --red: #E4572E;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ink);
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(232,163,61,0.05), transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(228,87,46,0.04), transparent 40%);
+    color: var(--paper);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .case {
+    width: 100%;
+    max-width: 640px;
+    border: 1px solid var(--panel-line);
+    background: var(--panel);
+    position: relative;
+  }
+
+  .case-tab {
+    position: absolute;
+    top: -14px;
+    left: 32px;
+    background: var(--amber);
+    color: var(--ink);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 4px 10px;
+  }
+
+  .case-inner { padding: 48px 40px 40px; }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--paper-dim);
+    letter-spacing: 0.1em;
+    margin: 0 0 8px;
+  }
+
+  h1 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 6px;
+    letter-spacing: -0.01em;
+  }
+
+  .sub {
+    color: var(--paper-dim);
+    font-size: 14.5px;
+    line-height: 1.55;
+    margin: 0 0 32px;
+    max-width: 46ch;
+  }
+
+  .method-strip {
+    display: flex;
+    gap: 0;
+    margin-bottom: 32px;
+    border-top: 1px solid var(--panel-line);
+    border-bottom: 1px solid var(--panel-line);
+  }
+
+  .method {
+    flex: 1;
+    padding: 14px 12px;
+    border-right: 1px solid var(--panel-line);
+  }
+  .method:last-child { border-right: none; }
+
+  .method .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--amber);
+    letter-spacing: 0.06em;
+  }
+  .method .desc {
+    font-size: 12.5px;
+    color: var(--paper-dim);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+
+  form { margin: 0; }
+
+  .dropzone {
+    border: 1.5px dashed var(--panel-line);
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+    position: relative;
+  }
+  .dropzone:hover, .dropzone.drag {
+    border-color: var(--amber);
+    background: rgba(232,163,61,0.04);
+  }
+  .dropzone input { display: none; }
+  .dz-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--paper);
+  }
+  .dz-sub {
+    font-size: 12px;
+    color: var(--paper-dim);
+    margin-top: 6px;
+  }
+  .dz-filename {
+    margin-top: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    color: var(--amber);
+    display: none;
+  }
+
+  button {
+    width: 100%;
+    margin-top: 20px;
+    padding: 15px;
+    background: var(--amber);
+    color: var(--ink);
+    border: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  button:hover { background: #f0b656; }
+  button:disabled { background: var(--panel-line); color: var(--paper-dim); cursor: not-allowed; }
+
+  .footnote {
+    margin-top: 18px;
+    font-size: 11.5px;
+    color: var(--paper-dim);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+  <div class="case">
+    <div class="case-tab">CASE FILE / NEW SUBMISSION</div>
+    <div class="case-inner">
+      <p class="eyebrow">DOCFORGE FORENSICS</p>
+      <h1>Document Forgery Detector</h1>
+      <p class="sub">Upload a scanned document, ID, or certificate. Three independent forensic passes examine it for tampering — no single method has to be certain, together they build a case.</p>
+
+      <div class="method-strip">
+        <div class="method">
+          <div class="tag">01 — ELA</div>
+          <div class="desc">Compression error mapping</div>
+        </div>
+        <div class="method">
+          <div class="tag">02 — EXIF</div>
+          <div class="desc">Metadata &amp; software trace</div>
+        </div>
+        <div class="method">
+          <div class="tag">03 — COPY-MOVE</div>
+          <div class="desc">Duplicated region matching</div>
+        </div>
+      </div>
+
+      <form action="/analyze" method="post" enctype="multipart/form-data" id="uploadForm">
+        <label class="dropzone" id="dropzone">
+          <input type="file" name="document" id="fileInput" accept=".png,.jpg,.jpeg" required>
+          <div class="dz-label">Drop file here, or click to browse</div>
+          <div class="dz-sub">PNG or JPG · max 10MB</div>
+          <div class="dz-filename" id="dzFilename"></div>
+        </label>
+        <button type="submit" id="submitBtn">Run Forensic Analysis →</button>
+      </form>
+      <p class="footnote">Heuristic analysis — flags evidence for review, not a legal determination.</p>
+    </div>
+  </div>
+
+<script>
+  const dz = document.getElementById('dropzone');
+  const input = document.getElementById('fileInput');
+  const fname = document.getElementById('dzFilename');
+  const label = dz.querySelector('.dz-label');
+
+  input.addEventListener('change', () => {
+    if (input.files.length) {
+      fname.textContent = '→ ' + input.files[0].name;
+      fname.style.display = 'block';
+      label.textContent = 'File selected';
+    }
+  });
+
+  ['dragover','dragenter'].forEach(evt =>
+    dz.addEventListener(evt, e => { e.preventDefault(); dz.classList.add('drag'); })
+  );
+  ['dragleave','drop'].forEach(evt =>
+    dz.addEventListener(evt, e => { e.preventDefault(); dz.classList.remove('drag'); })
+  );
+  dz.addEventListener('drop', e => {
+    if (e.dataTransfer.files.length) {
+      input.files = e.dataTransfer.files;
+      input.dispatchEvent(new Event('change'));
+    }
+  });
+
+  document.getElementById('uploadForm').addEventListener('submit', () => {
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Analyzing…';
+  });
+</script>
+</body>
+</html>
